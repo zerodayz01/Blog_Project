@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to the Blog</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    nav {
+      background-color: #111;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 20px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #00bcd4;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 3rem 1rem;
+      background-color: #fff;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #555;
+    }
+
+    .main-content {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      max-width: 1600px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    .carousel-container {
+      flex: 3;
+      position: relative;
+      overflow: hidden;
+      border-radius: 15px;
+    }
+
+    .carousel {
+      display: flex;
+      width: 100%;
+      height: 500px;
+      position: relative;
+    }
+
+    .slides {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .slides img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .slides img.active {
+      opacity: 1;
+    }
+
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: transparent;
+      color: white;
+      font-size: 2rem;
+      padding: 1rem;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .arrow-left {
+      left: 10px;
+    }
+
+    .arrow-right {
+      right: 10px;
+    }
+
+    .news-panel, .blog-panel {
+      flex: 1.2;
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      height: 500px;
+      overflow-y: auto;
+    }
+
+    .news-panel h3,
+    .blog-panel h3 {
+      margin-bottom: 1rem;
+      color: #00bcd4;
+      font-size: 1.4rem;
+    }
+
+    .news-item,
+    .blog-item {
+      margin-bottom: 1.2rem;
+    }
+
+    .news-item h4,
+    .blog-item h4 {
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .news-item p,
+    .blog-item p {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .category-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 3rem;
+    }
+
+    .btn {
+      background: #00bcd4;
+      color: white;
+      padding: 1rem 2rem;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: background 0.3s ease, transform 0.3s ease;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      background: #0097a7;
+      transform: translateY(-6px);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #777;
+      background: #111;
+      color: white;
+      margin-top: 4rem;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo"><a href="{{ url_for('index') }}">🏁 AutoAero Blog</a></div>
+    <ul>
+      <li><a href="{{ url_for('aviation') }}">Aviation</a></li>
+      <li><a href="{{ url_for('motorcycles') }}">Motorcycles</a></li>
+      <li><a href="{{ url_for('cars') }}">Cars</a></li>
+      <li><a href="{{ url_for('admin_dashboard') }}">Admin Login</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <h1>Welcome to the AutoAero Blog</h1>
+    <p>Where engines meet wings – your hub for everything aviation, motorcycles, and cars.</p>
+  </section>
+
+  <section class="main-content">
+    <aside class="blog-panel">
+      <h3>Recent Blog Submissions</h3>
+      {% for post in recent_posts %}
+      <div class="blog-item">
+        <h4>{{ post.title }}</h4>
+        <p>{{ post.content[:150] }}...</p>
+      </div>
+      {% else %}
+      <p>No recent blog submissions available.</p>
+      {% endfor %}
+    </aside>
+
+    <div class="carousel-container">
+      <div class="carousel">
+        <div class="arrow arrow-left" onclick="changeImage(-1)">&#8592;</div>
+
+        <div class="slides">
+          <img src="{{ url_for('static', filename='f22.jpg') }}" alt="Aviation" class="active">
+          <img src="{{ url_for('static', filename='ducati.jpg') }}" alt="Motorcycle">
+          <img src="{{ url_for('static', filename='gt3.jpg') }}" alt="Car">
+          <img src="{{ url_for('static', filename='ford.jpg') }}" alt="Car">
+          <img src="{{ url_for('static', filename='cessna.jpg') }}" alt="Aviation">
+          <img src="{{ url_for('static', filename='660.jpg') }}" alt="Motorcycle">
+        </div>
+
+        <div class="arrow arrow-right" onclick="changeImage(1)">&#8594;</div>
+      </div>
+    </div>
+
+    <aside class="news-panel">
+      <h3>Latest News</h3>
+      <div class="news-item">
+        <h4>F-22 Raptors Get Software Upgrade</h4>
+        <p>The USAF is rolling out a massive avionics patch to improve targeting and stealth integration.</p>
+      </div>
+      <div class="news-item">
+        <h4>Ducati Launches New V4 Monster</h4>
+        <p>More power, lighter frame, and an aggressive new look. Orders open next month.</p>
+      </div>
+      <div class="news-item">
+        <h4>Porsche GT3 Wins Nürburgring 24</h4>
+        <p>A nail-biting finish sees the GT3 edge out rivals and make history again.</p>
+      </div>
+    </aside>
+  </section>
+
+  <section class="category-buttons">
+    <a href="{{ url_for('aviation') }}" class="btn">Explore Aviation</a>
+    <a href="{{ url_for('motorcycles') }}" class="btn">Ride Motorcycles</a>
+    <a href="{{ url_for('cars') }}" class="btn">Drive Cars</a>
+  </section>
+
+  <section class="about-panel" style="max-width: 90%; margin: 2rem auto; padding: 2.5rem; background: #fff; border-radius: 15px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05); text-align: center;">
+    <h2 style="color: #00bcd4; font-size: 2.2rem; margin-bottom: 1rem;">About This Blog</h2>
+    <p style="font-size: 1.1rem; color: #444; line-height: 1.8; max-width: 1200px; margin: 0 auto;">
+      The AutoAero Blog is a unique space crafted for enthusiasts, professionals, and newcomers alike who share a passion for the world of speed — both in the sky and on the road.<br><br>
+      Whether you're fascinated by the cutting-edge developments in aviation technology, addicted to the roar of high-performance motorcycles, or captivated by the engineering of exotic cars, this is the place for you.<br><br>
+      We bring together community-submitted stories, expert insights, ride and flight experiences, and breaking news. Our goal is to build a growing network of enthusiasts who learn, share, and fuel each other's adrenaline.<br><br> <em>Get ready to launch, ride, and drive through the best stories the world of motion has to offer.</em>
+    </p>
+  </section>
+
+  <footer>
+    &copy; 2025 AutoAero Blog. Built for the road and sky.
+  </footer>
+
+  <script>
+    let images = document.querySelectorAll('.carousel .slides img');
+    let currentIndex = 0;
+
+    function changeImage(direction) {
+      images[currentIndex].classList.remove('active');
+      currentIndex = (currentIndex + direction + images.length) % images.length;
+      images[currentIndex].classList.add('active');
+    }
+
+    setInterval(() => changeImage(1), 10000);
+  </script>
+</body>
+</html>

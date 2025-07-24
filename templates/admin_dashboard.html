@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        nav {
+            background-color: #111;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #00bcd4;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            gap: 2rem;
+            margin-top: 30px;
+            padding: 2rem;
+            flex-grow: 1;
+        }
+
+        .left-panel, .right-panel {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            flex: 1;
+        }
+
+        .left-panel h3, .right-panel h3 {
+            color: #00bcd4;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-header {
+            background-color: #00bcd4;
+            color: white;
+            padding: 1rem;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .btn {
+            background: #00bcd4;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: background 0.3s ease, transform 0.3s ease;
+            display: inline-block;
+            border: none;
+        }
+
+        .btn:hover {
+            background: #0097a7;
+            transform: translateY(-4px);
+        }
+
+        .btn-danger {
+            margin-right: 10px;
+            background: #f44336;
+        }
+
+        .btn-success {
+            background: #4caf50;
+        }
+
+        .btn-warning {
+            background: #ff9800;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: #111;
+            color: white;
+            margin-top: 4rem;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo"><a href="{{ url_for('index') }}">🏁 AutoAero Blog</a></div>
+    <ul>
+        <li><a href="{{ url_for('aviation') }}">Aviation</a></li>
+        <li><a href="{{ url_for('motorcycles') }}">Motorcycles</a></li>
+        <li><a href="{{ url_for('cars') }}">Cars</a></li>
+        <li><a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a></li>
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <!-- Left Panel: Pending Posts -->
+    <div class="left-panel">
+        <h3>Pending Posts for Review</h3>
+        {% for post in pending_posts %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>{{ post.title }}</h5>
+                    <p><strong>By:</strong> {{ post.author or "Unknown" }}</p>
+                </div>
+                <div class="card-body">
+                    <p>{{ post.content }}</p>
+                    <form method="POST">
+                        <input type="hidden" name="post_id" value="{{ post.id }}">
+                        <button type="submit" name="action" value="approve" class="btn btn-success">Approve</button>
+                        <button type="submit" name="action" value="decline" class="btn btn-danger">Decline</button>
+                        <a href="{{ url_for('edit_post', post_id=post.id|string) }}" class="btn btn-warning">Edit</a>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <p>No pending posts at the moment.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Right Panel: Approved Posts -->
+    <div class="right-panel">
+        <h3>Approved Posts</h3>
+        {% for post in approved_posts %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>{{ post.title }}</h5>
+                    <p><strong>By:</strong> {{ post.author or "Unknown" }}</p>
+                </div>
+                <div class="card-body">
+                    <p>{{ post.content }}</p>
+                    <p><strong>Status: <span class="text-success">✅ Approved</span></strong></p>
+                    <a href="{{ url_for('edit_post', post_id=post.id|string) }}" class="btn btn-warning">Edit</a>
+                </div>
+            </div>
+        {% else %}
+            <p>No approved posts yet.</p>
+        {% endfor %}
+
+        <h3>Declined Posts</h3>
+        {% for post in declined_posts %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>{{ post.title }}</h5>
+                    <p><strong>By:</strong> {{ post.author or "Unknown" }}</p>
+                </div>
+                <div class="card-body">
+                    <p>{{ post.content }}</p>
+                    <p><strong>Status: <span class="text-danger">❌ Declined</span></strong></p>
+                    <a href="{{ url_for('edit_post', post_id=post.id|string) }}" class="btn btn-warning">Edit</a>
+                </div>
+            </div>
+        {% else %}
+            <p>No declined posts yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<footer>
+    &copy; 2025 AutoAero Blog. All rights reserved.
+</footer>
+
+</body>
+</html>
